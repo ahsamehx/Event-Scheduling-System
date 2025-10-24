@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  postgres:
+    build: .
+    container_name: event_db
+    environment:
+      POSTGRES_USER: event_user
+      POSTGRES_PASSWORD: event_passw
+      POSTGRES_DB: event_db
+
+    ports:
+      - "5432:5432"
+    volumes:
+      - event_data:/var/lib/postgresql/data  
+    restart: unless-stopped
+
+volumes:
+  event_data:    
