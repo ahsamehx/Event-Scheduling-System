@@ -1,11 +1,16 @@
 {
-  "name": "subscription-tracker",
+  "name": "event-scheduling-system",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "dev:test": "node test-server.js",
+    "setup-db": "node Database/setup.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
     "upstash": "npx @upstash/qstash-cli dev"
   },
   "dependencies": {
@@ -20,12 +25,14 @@
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.1",
     "morgan": "^1.10.1",
     "nodemailer": "^7.0.9",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "pg": "^8.11.3",
+    "@prisma/client": "^5.20.0"
   },
   "devDependencies": {
+    "prisma": "^5.20.0",
     "@eslint/js": "^9.37.0",
     "eslint": "^9.37.0",
     "globals": "^16.4.0"
