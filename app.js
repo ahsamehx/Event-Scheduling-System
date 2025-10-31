@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from "dotenv";
+import cors from 'cors';
 import router from './routes/routes.js';
 dotenv.config();
 
@@ -10,6 +11,12 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const app = express();
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 
