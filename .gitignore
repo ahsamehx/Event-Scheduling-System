@@ -63,3 +63,5 @@ typings/
 /generated/prisma
 
 /generated/prisma
+package-lock.json
+package.json

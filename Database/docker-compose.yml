@@ -6,7 +6,7 @@ services:
     container_name: event_db
     environment:
       POSTGRES_USER: event_user
-      POSTGRES_PASSWORD: event_passw
+      POSTGRES_PASSWORD: event_password
       POSTGRES_DB: event_db
 
     ports:
