@@ -25,7 +25,7 @@ create table if not exists event_attendees (
     attendee_id serial primary key,
     event_id integer not null references events(event_id) on delete cascade,
     user_id integer not null references users(user_id) on delete cascade,
-    role_in_event varchar(20) check (role_in_event in ('organizer', 'attendee')),
+    role_in_event varchar(20) check (role_in_event in ('organizer', 'attendee', 'collaborator')),
     joined_at timestamp default current_timestamp,
     unique(event_id, user_id)
 );

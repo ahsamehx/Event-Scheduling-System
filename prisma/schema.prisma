@@ -36,7 +36,7 @@ model Event {
   createdAt       DateTime  @default(now()) @map("created_at")
 
 
-  organizer   User      @relation("EventOrganizer", fields: [organizerId], references: [userId])
+  organizer   User      @relation("EventOrganizer", fields: [organizerId], references: [userId], onDelete: Cascade)
   attendees   EventAttendee[]
   invitations Invitation[]
   registrations Registration[]
@@ -51,8 +51,8 @@ model EventAttendee {
   roleInEvent      RoleInEvent     @map("role_in_event")
   joinedAt         DateTime        @default(now()) @map("joined_at")
 
-  event     Event    @relation(fields: [eventId], references: [eventId])
-  user      User     @relation(fields: [userId], references: [userId])
+  event     Event    @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@unique([eventId, userId], map: "event_attendee_event_id_user_id_key")
   @@map("event_attendees")
@@ -67,9 +67,9 @@ model Invitation {
   sentAt       DateTime         @default(now())  @map("sent_at")
   respondedAt  DateTime?        @map("responded_at")
 
-  event        Event            @relation(fields: [eventId], references: [eventId])
-  sender       User             @relation("InvitationSender", fields: [senderId], references: [userId])
-  recipient    User             @relation("InvitationRecipient", fields: [recipientId], references: [userId])
+  event        Event            @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+  sender       User             @relation("InvitationSender", fields: [senderId], references: [userId], onDelete: Cascade)
+  recipient    User             @relation("InvitationRecipient", fields: [recipientId], references: [userId], onDelete: Cascade)
 
   @@unique([eventId, recipientId], map: "invitation_event_id_recipient_id_key")
   @@map("invitations")
@@ -82,8 +82,8 @@ model Registration {
   responseStatus      ResponseStatus @map("response_status")
   registrationDate    DateTime      @default(now()) @map("registration_date")
 
-  event      Event          @relation(fields: [eventId], references: [eventId])
-  user       User           @relation(fields: [userId], references: [userId])
+  event      Event          @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+  user       User           @relation(fields: [userId], references: [userId],onDelete: Cascade)
 
   @@unique([eventId, userId], map: "registration_event_id_user_id_key")
   @@map("registrations")
@@ -94,6 +94,7 @@ model Registration {
 enum RoleInEvent {
   organizer
   attendee
+  collaborator
 
   @@map("role_in_event")
 }
