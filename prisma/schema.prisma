@@ -31,9 +31,8 @@ model Event {
   title            String    @db.VarChar(100)
   description      String?   @db.Text
   eventDate        DateTime  @map("event_date") @db.Date
-  eventTime        String    @db.VarChar(30)
-  location         String    @db.VarChar(255)
-  createdAt       DateTime  @default(now()) @map("created_at")
+  location         String?    @db.VarChar(255)
+  createdAt        DateTime  @default(now()) @map("created_at")
 
 
   organizer   User      @relation("EventOrganizer", fields: [organizerId], references: [userId], onDelete: Cascade)

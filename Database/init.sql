@@ -10,7 +10,7 @@ create table if not exists users (
 );
 
 
-/*
+
 create table if not exists events (
     event_id serial primary key,
     organizer_id integer not null references users(user_id) on delete cascade,
@@ -35,7 +35,7 @@ create table if not exists invitations (
     event_id integer not null references events(event_id) on delete cascade,
     sender_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     recipient_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    status VARCHAR(20) CHECK (status IN ('Pending', 'Accepted', 'Rejected')),
+    status VARCHAR(20) DEFAULT 'Pending' CHECK (status IN ('Pending', 'Accepted', 'Rejected')),
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     responded_at TIMESTAMP,
     unique(event_id, recipient_id)
@@ -49,5 +49,5 @@ create table if not exists registrations (
     registration_date timestamp default current_timestamp,
     unique(event_id, user_id)
 );
-*/
+
 
