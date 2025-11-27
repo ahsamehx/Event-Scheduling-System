@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from  "../config/prismaClient.js";
 
-const prisma = new PrismaClient();
 
 /**
  * @typedef {Object} EventAttendeeModel
@@ -17,7 +16,7 @@ export const EventAttendee = {
     return await prisma.eventAttendee.create({ data,
         include: {
             user:{
-                select: {userId: true, firstname:true, lastname:true, email:true}
+                select: {userId: true, name: true, email:true}
             },
             event: {
                 select: { eventId: true, title: true, eventDate: true }
@@ -33,7 +32,7 @@ export const EventAttendee = {
         },
         include: {
             user:{
-                select: {userId: true, firstname:true, lastname:true, email:true}
+                select: {userId: true, name: true, email:true}
             },
         }
     });
@@ -44,7 +43,7 @@ export const EventAttendee = {
         where: { eventId },
         include: {
             user:{
-                select: {userId: true, firstname:true, lastname:true, email:true}
+                select: {userId: true, name: true, email:true}
             },
         }
     });

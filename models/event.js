@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from  "../config/prismaClient.js";
 
-const prisma = new PrismaClient();
 /**
  * @typedef {Object} RegistrationModel
  * @property {(data: Object) => Promise<any>} createEvent
@@ -22,7 +21,7 @@ export const Event = {
             data,
             include: {
                 organizer: {
-                    select: { userId: true, firstname: true, lastname: true, email: true }
+                    select: { userId: true, name: true, email: true }
                 }
             },
         });
@@ -33,19 +32,19 @@ export const Event = {
             where: { eventId },
             include: {
                 organizer: {
-                    select: { userId: true, firstname: true, lastname: true, email: true }
+                    select: { userId: true, name: true, email: true }
                 },
                 attendees:{
                     include:{
                         user:{
-                            select: { userId: true, firstname:true, lastname:true, email:true }
+                            select: { userId: true, name: true, email:true }
                         }
                     }
                 },
                 registrations:{
                     include:{
                         user:{
-                            select: { userId: true, firstname:true, lastname:true, email:true }
+                            select: { userId: true, name: true, email:true }
                         }
                     }
                 },
@@ -58,12 +57,12 @@ export const Event = {
             where: { organizerId },
             include: {
                 organizer: {
-                    select: { userId: true, firstname: true, lastname: true, email: true }
+                    select: { userId: true, name: true, email: true }
                 },
                 attendees:{
                     include:{
                         user:{
-                            select: { userId: true, firstname:true, lastname:true, email:true }
+                            select: { userId: true, name: true, email:true }
                         }
                     }
                 },
@@ -73,39 +72,38 @@ export const Event = {
     },
 
     async getEventsUserIsInvitedTo(userId) {
-        return await prisma.event.findMany({
-            where: {
-                attendees: {
-                    some: { 
-                        userId: userId,
-                        roleInEvent: {in:['attendee','collaborator']} 
+    return await prisma.event.findMany({
+        where: {
+            invitations: {
+                some: {
+                    recipientId: userId
+                }
+            }
+        },
+        include: {
+            organizer: {
+                select: { userId: true, name: true, email: true }
+            },
+            invitations: {
+                where: { recipientId: userId },
+                include: {
+                    recipient: {
+                        select: { userId: true, name: true, email: true }
                     }
                 }
-            },
-            include: {
-                organizer: {
-                    select: { userId: true, firstname: true, lastname: true, email: true }
-                },
-                attendees:{
-                    where: { userId },
-                    include:{
-                        user:{
-                            select: { userId: true, firstname:true, lastname:true, email:true }
-                        }
-                    },
+            }
+        },
+        orderBy: { eventDate: 'desc' }
+    });
+},
 
-                },
-            },
-            orderBy: { eventDate: 'desc' }
-        });
-    },
     async updateEvent(eventId, data) {
         return await prisma.event.update({
             where: { eventId },
             data,
             include: {
                 organizer: {
-                    select: { userId: true, firstname: true, lastname: true, email: true }
+                    select: { userId: true, name: true, email: true }
                 }
             },
         });
@@ -156,19 +154,19 @@ export const Event = {
             where,
             include: {
                 organizer: {
-                    select: { userId: true, firstname: true, lastname: true, email: true }
+                    select: { userId: true, name: true, email: true }
                 },
                 attendees:{
                     include:{
                         user:{
-                            select: { userId: true, firstname:true, lastname:true, email:true }
+                            select: { userId: true, name: true, email:true }
                         }
                     }
                 },
                 registrations:{
                     include:{
                         user:{
-                            select: { userId: true, firstname:true, lastname:true, email:true }
+                            select: { userId: true, name: true, email:true }
                         }
                     }
                 },

@@ -1,5 +1,5 @@
-import express from 'express';
 import dotenv from "dotenv";
+import express from 'express';
 import cors from 'cors';
 import router from './routes/routes.js';
 dotenv.config();
@@ -7,8 +7,7 @@ dotenv.config();
 import  {PORT} from './config/env.js';
 
 import cookieParser from 'cookie-parser';
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import prisma from  "./config/prismaClient.js";
 
 const app = express();
 
@@ -32,5 +31,16 @@ app.use('/api/v1', router);
 app.listen(PORT, async () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+async function startServer() {
+  try {
+    await prisma.$connect();
+    console.log("📦 Database connected successfully!");
+  } catch (error) {
+    console.error("❌ Database connection failed:", error);
+    process.exit(1);
+  }
+}
+startServer();
 
 export default app; 

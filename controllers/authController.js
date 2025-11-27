@@ -41,7 +41,7 @@ export const signUp = async (req, res, next) => {
         });
 
         const token = jwt.sign(
-        { userId: newUser.id, role: newUser.role },
+        { userId: newUser.userId, role: newUser.role },
         JWT_SECRET,
         { expiresIn: JWT_EXPIRES_IN }
         );
@@ -51,7 +51,7 @@ export const signUp = async (req, res, next) => {
         message: "User created successfully",
         data: {
             token,
-            id: newUser.id,
+            userId: newUser.userId,
             name: newUser.name,
             email: newUser.email,
             role: newUser.role,
@@ -80,7 +80,7 @@ export const signIn = async (req, res) => {
             error.status = 401;
             throw error;
         }
-        const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET , {expiresIn : JWT_EXPIRES_IN});
+        const token = jwt.sign({ userId: user.userId, role: user.role }, JWT_SECRET , {expiresIn : JWT_EXPIRES_IN});
 
         res.status(200).json({ 
             success : true, 
@@ -90,7 +90,7 @@ export const signIn = async (req, res) => {
                 name: user.name,
                 email: user.email, 
                 role : user.role,
-                id: user.id
+                userId: user.userId
             }
         });
     }

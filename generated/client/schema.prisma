@@ -1,0 +1,113 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  userId       Int      @id @default(autoincrement()) @map("user_id")
+  firstname    String   @db.VarChar(50)
+  lastname     String   @db.VarChar(50)
+  username     String   @unique @db.VarChar(50)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  email        String   @unique @db.VarChar(100)
+  createdAt    DateTime @default(now())
+
+  organizedEvents     Event[]         @relation("EventOrganizer")
+  eventAttendances    EventAttendee[]
+  sentInvitations     Invitation[]    @relation("InvitationSender")
+  receivedInvitations Invitation[]    @relation("InvitationRecipient")
+  registrations       Registration[]
+
+  @@map("users")
+}
+
+model Event {
+  eventId     Int      @id @default(autoincrement()) @map("event_id")
+  organizerId Int      @map("organizer_id")
+  title       String   @db.VarChar(100)
+  description String?  @db.Text
+  eventDate   DateTime @map("event_date") @db.Date
+  location    String?  @db.VarChar(255)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  organizer     User            @relation("EventOrganizer", fields: [organizerId], references: [userId], onDelete: Cascade)
+  attendees     EventAttendee[]
+  invitations   Invitation[]
+  registrations Registration[]
+
+  @@map("events")
+}
+
+model EventAttendee {
+  attendeeId  Int         @id @default(autoincrement()) @map("attendee_id")
+  eventId     Int         @map("event_id")
+  userId      Int         @map("user_id")
+  roleInEvent RoleInEvent @map("role_in_event")
+  joinedAt    DateTime    @default(now()) @map("joined_at")
+
+  event Event @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([eventId, userId], map: "event_attendee_event_id_user_id_key")
+  @@map("event_attendees")
+}
+
+model Invitation {
+  invitationId Int              @id @default(autoincrement()) @map("invitation_id")
+  eventId      Int              @map("event_id")
+  senderId     Int              @map("sender_id")
+  recipientId  Int              @map("recipient_id")
+  status       InvitationStatus @default(Pending)
+  sentAt       DateTime         @default(now()) @map("sent_at")
+  respondedAt  DateTime?        @map("responded_at")
+
+  event     Event @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+  sender    User  @relation("InvitationSender", fields: [senderId], references: [userId], onDelete: Cascade)
+  recipient User  @relation("InvitationRecipient", fields: [recipientId], references: [userId], onDelete: Cascade)
+
+  @@unique([eventId, recipientId], map: "invitation_event_id_recipient_id_key")
+  @@map("invitations")
+}
+
+model Registration {
+  registrationId   Int            @id @default(autoincrement()) @map("registration_id")
+  eventId          Int            @map("event_id")
+  userId           Int            @map("user_id")
+  responseStatus   ResponseStatus @map("response_status")
+  registrationDate DateTime       @default(now()) @map("registration_date")
+
+  event Event @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([eventId, userId], map: "registration_event_id_user_id_key")
+  @@map("registrations")
+}
+
+enum RoleInEvent {
+  organizer
+  attendee
+  collaborator
+
+  @@map("role_in_event")
+}
+
+enum InvitationStatus {
+  Pending
+  Accepted
+  Rejected
+
+  @@map("invitation_status")
+}
+
+enum ResponseStatus {
+  Going
+  Maybe
+  NotGoing @map("Not Going")
+
+  @@map("response_status")
+}

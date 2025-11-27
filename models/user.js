@@ -1,8 +1,7 @@
-  import { PrismaClient } from '@prisma/client';
+import prisma from  "../config/prismaClient.js";
 
-  const prisma = new PrismaClient();
 
-  /**
+/**
  * @typedef {Object} UserModel
  * @property {(data: Object) => Promise<any>} createUser
  * @property {(email: string) => Promise<any>} findUserByEmail
@@ -32,10 +31,11 @@
 
     
     async findUserById(id) {
-      return await prisma.user.findUnique({
-        where: { id },
-      });
-    },
+    return prisma.user.findUnique({
+      where: { userId: id },
+    });
+  },
+
 
     
     async getAllUsers() {
@@ -43,16 +43,16 @@
     },
 
     
-    async deleteUser(id) {
-      return await prisma.user.delete({
-        where: { id },
-      });
-    },
+   async deleteUser(id) {
+    return prisma.user.delete({
+      where: { userId: id },
+    });
+  },
 
     
     async updateUser(id, data) {
-      return await prisma.user.update({
-        where: { id },
+      return prisma.user.update({
+        where: { userId: id },
         data,
       });
     },

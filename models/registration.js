@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from  "../config/prismaClient.js";
 
-const prisma = new PrismaClient();
 /**
  * @typedef {Object} RegistrationModel
  * @property {(eventId: number, userId: number, responseStatus: string) => Promise<any>} createOrUpdateRegistration
@@ -28,7 +27,7 @@ export const Registration = {
             },
             include:{
                 user:{
-                    select: {userId: true, firstname:true, lastname:true, email:true}
+                    select: {userId: true, name: true, email:true}
                 },
                 event: {
                     select: {eventId: true, title: true, eventDate: true}
@@ -44,7 +43,7 @@ export const Registration = {
             },
             include:{
                 user:{
-                    select: {userId: true, firstname:true, lastname:true, email:true}
+                    select: {userId: true, name: true, email:true}
                 },
                 event: {
                     select: {eventId: true, title: true, eventDate: true}
@@ -58,7 +57,7 @@ export const Registration = {
             where: { eventId },
             include:{
                 user:{
-                    select: {userId: true, firstname:true, lastname:true, email:true}
+                    select: {userId: true, name: true, email:true}
                 },
             }
         });
