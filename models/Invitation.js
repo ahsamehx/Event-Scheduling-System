@@ -3,7 +3,7 @@ import prisma from  "../config/prismaClient.js";
 
 /**
  * @typedef {Object} InvitationModel
- * @property {(eventId: number, senderId: number, recipientId: number) => Promise<any>} createInvitation
+ * @property {(data: {eventId: number, senderId: number, recipientId: number, roleInEvent?: string}) => Promise<any>} createInvitation
  * @property {(invitationId: number) => Promise<any>} getInvitationById
  * @property {(eventId: number) => Promise<any[]>} getInvitationsByEvent
  * @property {(userId: number) => Promise<any[]>} getInvitationsForUser
@@ -14,12 +14,13 @@ import prisma from  "../config/prismaClient.js";
 /** @type {InvitationModel} */
 export const Invitation = {
 
-    async createInvitation(eventId, senderId, recipientId) {
+    async createInvitation({ eventId, senderId, recipientId, roleInEvent }) {
         return await prisma.invitation.create({
             data: {
                 eventId,
                 senderId,
                 recipientId,
+                roleInEvent: roleInEvent || 'attendee'
             },
             include: {
                 sender: { select: { userId: true, name: true, email: true } },
@@ -61,21 +62,23 @@ export const Invitation = {
     },
 
     async findInvitationByEventAndRecipient(eventId, recipientId) {
-    return await prisma.invitation.findUnique({
-        where: {
-            eventId_recipientId: {  
-                eventId,
-                recipientId
+        return await prisma.invitation.findUnique({
+            where: {
+                eventId_recipientId: {  
+                    eventId,
+                    recipientId
+                }
             }
-        }
-    });
-},
-
+        });
+    },
 
     async updateStatus(invitationId, status) {
         return await prisma.invitation.update({
             where: { invitationId },
-            data: { status },
+            data: { 
+                status,
+                respondedAt: new Date()
+            },
             include: {
                 event: true,
                 sender: true,
