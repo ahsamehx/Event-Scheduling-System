@@ -24,7 +24,7 @@ export const getUsers = async (req, res, next) => {
 
 export const getUser = async (req, res, next) => {
   try {
-    const user = await User.findUserById(Number(req.params.userId));
+    const user = await User.findUserById(Number(req.params.id));
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -40,9 +40,9 @@ export const getUser = async (req, res, next) => {
 export const updateUserDetails = async (req, res, next) => {
   try {
     const isAdmin = req.user?.role === 'admin';
-    const userId = req.params.userId ? Number(req.params.userId) : req.user?.userId;
+    const userId = req.params.id ? Number(req.params.id) : req.user?.userId;
 
-    if (!isAdmin && req.params.userId && userId !== Number(req.params.userId)) {
+    if (!isAdmin && req.params.id && userId !== Number(req.params.id)) {
       return res.status(403).json({ success: false, message: 'Access denied' });
     }
 
@@ -64,7 +64,7 @@ export const updateUserDetails = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
   try {
-    const user = await User.deleteUser(Number(req.params.userId));
+    const user = await User.deleteUser(Number(req.params.id));
     res.status(200).json({ success: true, data: user });
   } catch (error) {
       next(error);
@@ -76,7 +76,7 @@ export const deleteUser = async (req, res, next) => {
 export const changePassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    const userId = req.params.userId ? Number(req.params.userId) : req.user.userId;
+    const userId = req.params.id ? Number(req.params.id) : req.user.userId;
 
     const user = await User.findUserById(userId);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
@@ -99,7 +99,7 @@ export const changePassword = async (req, res, next) => {
 export const changeRole = async (req, res, next) => {
   try {
     const { role } = req.body;
-    const userId = Number(req.params.userId);
+    const userId = Number(req.params.id);
 
     const updatedUser = await User.updateUser(userId, { role });
     res.status(200).json({ success: true, message: 'Role updated successfully', data: updatedUser });

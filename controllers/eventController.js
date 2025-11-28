@@ -68,11 +68,16 @@ export const inviteUserToEvent = async (req, res) => {
     try {
         const senderId = req.user.userId;
         const eventId = Number(req.params.eventId);
-        const recipientId =  Number(req.body.recipientId);
+        const { recipientId, roleInEvent } = req.body;
 
         console.log('senderId:', senderId);
         console.log('eventId:', eventId);   
         console.log('recipientId:', recipientId);
+
+        const validRoles = ['attendee', 'collaborator'];
+        if (roleInEvent && !validRoles.includes(roleInEvent)) {
+            return res.status(400).json({ error: "Invalid role. Must be 'attendee' or 'collaborator'" });
+        }
 
         // Ensure only organizer can invite
         const event = await Event.findEventById(Number(eventId));
@@ -94,11 +99,12 @@ export const inviteUserToEvent = async (req, res) => {
             });
         }
 
-        const invitation = await Invitation.createInvitation(
-            Number(eventId),
-            senderId,
-            recipientId
-        );
+        const invitation = await Invitation.createInvitation({
+            eventId: Number(eventId),
+            senderId: senderId,
+            recipientId: Number(recipientId),
+            roleInEvent: roleInEvent || 'attendee'
+    });
 
         return res.json({
             message: "User invited successfully",

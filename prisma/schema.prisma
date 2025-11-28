@@ -15,7 +15,7 @@ model User {
   password  String   @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  role      String   @default("user") @db.VarChar(20)
   organizedEvents Event[]  @relation("EventOrganizer")
   eventAttendances EventAttendee[]
   sentInvitations Invitation[] @relation("InvitationSender")
@@ -61,6 +61,7 @@ model Invitation {
   eventId      Int              @map("event_id")
   senderId     Int              @map("sender_id")
   recipientId  Int              @map("recipient_id")
+  roleInEvent  RoleInEvent      @default(attendee) @map("role_in_event")
   status       InvitationStatus @default(Pending) 
   sentAt       DateTime         @default(now())  @map("sent_at")
   respondedAt  DateTime?        @map("responded_at")
