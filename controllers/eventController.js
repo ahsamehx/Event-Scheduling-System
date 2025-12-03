@@ -1,6 +1,8 @@
 import Event from "../models/Event.js";
 import EventAttendee from "../models/EventAttendee.js";
 import Invitation from "../models/Invitation.js";
+import User from "../models/user.js";
+
 
 export const createEvent = async (req, res) => {
     try {
@@ -68,15 +70,28 @@ export const inviteUserToEvent = async (req, res) => {
     try {
         const senderId = req.user.userId;
         const eventId = Number(req.params.eventId);
-        const { recipientId, roleInEvent } = req.body;
+        const { recipientEmail, roleInEvent } = req.body;
 
         console.log('senderId:', senderId);
         console.log('eventId:', eventId);   
-        console.log('recipientId:', recipientId);
+        console.log('recipientEmail:', recipientEmail);
 
         const validRoles = ['attendee', 'collaborator'];
         if (roleInEvent && !validRoles.includes(roleInEvent)) {
             return res.status(400).json({ error: "Invalid role. Must be 'attendee' or 'collaborator'" });
+        }
+
+        const recipient = await User.findUserByEmail(recipientEmail);
+        if (!recipient) {
+            return res.status(404).json({ error: "Recipient user not found" });
+        }
+
+        const recipientId = recipient.userId;
+
+        if (senderId === recipientId) {
+            return res.status(400).json({ 
+                error: "You cannot invite yourself to your own event" 
+            });
         }
 
         // Ensure only organizer can invite
