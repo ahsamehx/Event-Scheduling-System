@@ -1,6 +1,6 @@
 import Registration from "../models/registration.js";
-import Event from "../models/Event.js";
-import EventAttendee from "../models/EventAttendee.js";
+import Event from "../models/event.js";
+import EventAttendee from "../models/eventAttendee.js";
 
 export const respondToEvent = async (req, res) => {
     try {

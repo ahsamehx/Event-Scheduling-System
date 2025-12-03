@@ -1,8 +1,6 @@
-import Event from "../models/Event.js";
-import EventAttendee from "../models/EventAttendee.js";
-import Invitation from "../models/Invitation.js";
-import User from "../models/user.js";
-
+import Event from "../models/event.js";
+import EventAttendee from "../models/eventAttendee.js";
+import Invitation from "../models/invitation.js";
 
 export const createEvent = async (req, res) => {
     try {
