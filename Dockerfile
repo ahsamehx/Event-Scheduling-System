@@ -1,25 +1,26 @@
-FROM node:22.20.0
+FROM node:20-alpine
 
-# Set working directory inside the container
-WORKDIR /
+# Install required packages
+RUN apk add --no-cache openssl netcat-openbsd dos2unix
 
-# Copy only package.json first (for caching)
+WORKDIR /app
+
+# Copy package files
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --production
 
-# Copy the entire backend code into the container
+# Copy application code
 COPY . .
 
-# Generate the Prisma client from schema.prisma
+# Generate Prisma Client with correct binary target
 RUN npx prisma generate
 
-RUN apt-get update && apt-get install -y netcat-openbsd
+# Fix entrypoint line endings
+COPY entrypoint.sh /entrypoint.sh
+RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
 
-# Expose the backend port (change if you use a different port)
 EXPOSE 3000
 
-# Start the backend application
-CMD ["sh", "entrypoint.sh"]
-
+ENTRYPOINT ["/entrypoint.sh"]
