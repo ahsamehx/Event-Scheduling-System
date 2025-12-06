@@ -1,6 +1,7 @@
 import Invitation from "../models/invitation.js";
-import EventAttendee from "../models/eventAttendee.js";   
 import Event from "../models/event.js";
+import EventAttendee from "../models/eventAttendee.js";
+import User from "../models/user.js";
 // import { stat } from "fs";
 // import { error } from "console";
 

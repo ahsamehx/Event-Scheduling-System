@@ -14,6 +14,11 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U event_user -d event_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
@@ -21,13 +26,17 @@ services:
     image: backend-container
     container_name: event-backend
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
-      DATABASE_URL: postgres://event_user:event_password@db:5432/event_db
+      DATABASE_URL: postgresql://event_user:event_password@db:5432/event_db
       PORT: 3000
+      JWT_SECRET: "9f3b2a1e84d67cc4b0a62e59d1c8f3a7b4e15d9f8c21a3e6b7f0c2d4a9b1e7f5"
+      JWT_EXPIRES_IN: "1d"
+      NODE_ENV: production
     ports:
       - "3000:3000"
-
+    restart: unless-stopped
 
 volumes:
   pgdata:
