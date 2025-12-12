@@ -37,6 +37,17 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
+    
+frontend:
+  image: rodynaamrfathygouda/event-frontend:latest
+  container_name: event_frontend
+  depends_on:
+    - backend
+  ports:
+    - "80:80"
+  restart: always
+
+    
 
 volumes:
   pgdata:
