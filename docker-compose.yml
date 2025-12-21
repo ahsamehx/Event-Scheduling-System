@@ -18,7 +18,9 @@ services:
       test: ["CMD-SHELL", "pg_isready -U event_user -d event_db"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 5 
+    networks:
+      - event-network
 
   backend:
     build:
@@ -37,17 +39,21 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
+    networks:
+      - event-network
     
-frontend:
-  image: rodynaamrfathygouda/event-frontend:latest
-  container_name: event_frontend
-  depends_on:
-    - backend
-  ports:
-    - "80:80"
-  restart: always
+  frontend:
+    image: rodynaamrfathygouda/event-frontend:latest
+    container_name: event_frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      - event-network
 
-    
-
+networks:
+  event-network:
 volumes:
   pgdata:
